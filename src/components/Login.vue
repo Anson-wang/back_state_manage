@@ -1,15 +1,15 @@
 <template>
-  <div class="home">
+  <div>
+    登录组件
   </div>
 </template>
 
 <script>
-
-
 export default {
-  name: 'Home',
-  components: {
-   
-  }
+
 }
 </script>
+
+<style lang="less" scoped>
+
+</style>
