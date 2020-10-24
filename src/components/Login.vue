@@ -3,18 +3,18 @@
     <div class="login_box">
       <!-- 头像区域 -->
       <div class="avatar_box">
-        <img src="../assets/logo.png" alt="">
+        <img src="../assets/img/logo.png" alt="">
       </div>
       <!-- 登录表单区域 :rules绑定表单的验证规则,ref获取表单实例对象-->
       <el-form ref="loginFormRef" class="login_form" :model="loginForm" :rules="loginFormRules">
         <!-- 用户名 -->
         <el-form-item prop="username">
           <!-- prefix-icon放前面，suffix-icon放后面 -->
-          <el-input v-model="loginForm.username" prefix-icon='iconfont icon-jinrongxianxingge-'></el-input>
+          <el-input v-model="loginForm.username" prefix-icon='iconfont icon-user'></el-input>
         </el-form-item>
         <!-- 密码 -->
         <el-form-item prop="password">
-          <el-input v-model="loginForm.password" prefix-icon='iconfont icon-suo' type="password"></el-input>
+          <el-input v-model="loginForm.password" prefix-icon='iconfont icon-mima' type="password"></el-input>
         </el-form-item>
         <!-- 按钮区域 -->
         <el-form-item class="btns">
@@ -31,8 +31,8 @@ export default {
   data() {
     return{
       loginForm: {
-        username: '',
-        password: ''
+        username: 'admin',
+        password: '123456'
       },
       //表单验证规则
       loginFormRules: {
