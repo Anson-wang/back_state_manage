@@ -398,6 +398,7 @@ export default {
       this.getUserList()
     },
     setRoleDialogClosed() {
+      //重置选中的用户id和角色id
       this.selectedRoleId = ''
       this.userInfo = ''
     }
