@@ -9,7 +9,7 @@
       <el-button type="info" @click="logout">登出</el-button>
     </el-header>
     <!-- 页面主体 -->
-    <el-container>
+    <el-container class='mainpage'>
       <!-- 侧边栏 -->
       <el-aside :width="isCollapse ? '64px' : '200px'">
         <div class="toggle-button" @click="toggleCollapse">|||</div>
@@ -53,8 +53,9 @@
         </el-menu>
       </el-aside>
       <!-- 右侧内容主体 -->
-      <el-main>
-        <router-view/>
+      <el-main :class={small:isCollapse}>
+      <!-- <el-main :margin> -->
+        <router-view />
       </el-main>
     </el-container>
   </el-container>
@@ -82,7 +83,7 @@ export default {
   //创建时调用
   created() {
     this.getMenuList(),
-    this.activePath = window.sessionStorage.getItem('activePath')
+      (this.activePath = window.sessionStorage.getItem('activePath'))
   },
   methods: {
     logout() {
@@ -104,7 +105,6 @@ export default {
       window.sessionStorage.setItem('activePath', activePath)
       this.activePath = activePath
     }
-    
   }
 }
 </script>
@@ -117,11 +117,15 @@ export default {
 .el-header {
   background-color: #373d41;
   display: flex;
+  width: 100%;
   justify-content: space-between;
   padding-left: 0;
   align-items: center;
   color: #fff;
   font-size: 22px;
+  position: fixed;
+  height: 60px;
+  z-index: 9999;
   div {
     height: 60px;
     display: flex;
@@ -139,26 +143,45 @@ export default {
 .el-aside {
   background-color: #333744;
   transition: width 0.5s;
+  display: flex;
+  flex-direction:column;
+  height: 100%;
+  position: fixed;
+  margin-top: 60px;
+  z-index: 9999;
   .el-menu {
     border-right: none;
   }
+  .toggle-button {
+    width: 100%;
+    height: 24px;
+    background-color: #4a5064;
+    color: #fff;
+    text-align: center;
+    font-size: 10px;
+    line-height: 24px;
+    letter-spacing: 0.2em;
+    // 鼠标移入变成小手形状
+    cursor: pointer;
+  }
 }
+
 .el-main {
-  background-color: #eaedf1;
-}
+    margin-top: 60px;
+    width:100%;
+    // height: 100%;
+    background-color: #eaedf1;
+    margin-left: 200px;
+    transition: margin-left 0.5s;
+    
+    
+  }
+
 .iconfont {
   font-size: 20px;
   margin-right: 10px;
 }
-
-.toggle-button {
-  background-color: #4a5064;
-  color: #fff;
-  text-align: center;
-  font-size: 10px;
-  line-height: 24px;
-  letter-spacing: 0.2em;
-  // 鼠标移入变成小手形状
-  cursor: pointer;
+.small{
+  margin-left: 64px;
 }
 </style>
