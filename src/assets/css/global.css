@@ -26,3 +26,11 @@ body,
 .el-message {
     margin-top: 80px;
 }
+
+.el-cascader-panel {
+    height: 204px;
+}
+
+.el-cascader-panel .el-radio__input {
+    visibility: hidden;
+}
