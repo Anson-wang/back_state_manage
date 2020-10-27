@@ -49,32 +49,35 @@
       <el-table :data="dataBind.data" border stripe>
         <el-table-column type="expand">
           <template slot-scope="scope">
+            <el-col closable>
+              <span v-if="isStart(scope.row.attr_vals) == 1">
                 <el-tag
-                clase="vlas_tag"
-                  v-for="(item, i) in scope.row.attr_vals"
-                  :key="i"
+                  class="vlas_tag"
+                  v-for="(item, value) in scope.row.attr_vals.split(/ |\,/)"
+                  :key="value"
                   closable
-                  @close="removeVals(i,scope.row)"
+                  @close="removeVals(item, scope.row, value)"
                 >
                   {{ item }}
                 </el-tag>
+              </span>
               <el-input
                 class="input-new-tag"
-                v-if="scope.row.inputVisible"
-                v-model="scope.row.inputValue"
+                v-if="inputVisible == scope.row.attr_id"
+                v-model="inputValue"
                 ref="saveTagInput"
                 size="small"
-                @keyup.enter.native="handleInputConfirm(scope.row)"
+               
                 @blur="handleInputConfirm(scope.row)"
+                @keyup.enter.native="$event.target.blur"
               >
-               <!-- @keyup.enter.native="$event.target.blur" -->
-                
+                <!-- @keyup.enter.native="handleInputConfirm(scope.row)" -->
               </el-input>
               <el-button
                 v-else
                 class="button-new-tag"
                 size="small"
-                @click="showInput(scope.row)"
+                @click="showInput(scope.row.attr_id)"
                 >+ New Tag</el-button
               >
             </el-col>
@@ -183,7 +186,9 @@ export default {
         attr_name: [
           { required: true, message: '此项不能为空', trigger: 'blur' }
         ]
-      }
+      },
+      inputVisible: 0,
+      inputValue: ''
     }
   },
   created() {
@@ -223,6 +228,13 @@ export default {
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.catelist = res.data
     },
+    isStart(str) {
+      if (str.match(/^[ ]*$/)) {
+        return 0
+      }
+      return 1
+    },
+
     async cateChange() {
       this.getParamsData()
     },
@@ -241,13 +253,6 @@ export default {
       )
 
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
-      //获取vals,并将字符串置为数组
-      res.data.forEach(item => {
-        //vals分割之前先判空
-        item.attr_vals = item.attr_vals.match(/^[ ]*$/) ? [] : item.attr_vals.split(/ |\,/) 
-        item.inputVisible = false
-        item.inputValue = ''
-      })
       if (this.activeName === 'many') {
         this.manyTableData = res.data
       } else {
@@ -327,43 +332,73 @@ export default {
       this.$message.success('删除成功')
       this.getParamsData()
     },
-    showInput(row) {
-      row.inputVisible = true
-      //获取焦点
+    getResult(res) {
+      // console.log(res)
+    },
+    showInput(id) {
+      this.inputVisible = id
       this.$nextTick(_ => {
           this.$refs.saveTagInput.$refs.input.focus();
         });
     },
-    async handleInputConfirm(row) {
-      if(row.inputValue.trim().length === 0) {
-        row.inputValue = ''
-        row.inputVisible = false
-        return
-      }
-      //没有return说明输入的不是空或全为空格
-      row.attr_vals.push(row.inputValue.replace(/ /g,''))
-      row.inputValue = ''
-      row.inputVisible = false
-      //上传到数据库
-      this.saveAttrValue(row)
-    },
-    //删除标签
-    async removeVals(i,row) {
-      row.attr_vals.splice(i, 1)
-       this.saveAttrValue(row)
-    },
-    //将对 attr_value 对操作 抽成函数
-    async saveAttrValue(row) {
-      const { data: res } = await this.$http.put(
-          `categories/${this.cateId}/attributes/${row.attr_id}`,
+    async handleInputConfirm(cate) {
+      let inputValue = this.inputValue
+      inputValue = inputValue.replace(/ /g,'')
+      if (this.isStart(inputValue) == 1) {
+        let vals = cate.attr_vals
+        if (this.isStart(vals) == 1) {
+          vals = vals + ' ' + inputValue
+        } else {
+          vals += inputValue
+        }
+
+        const { data: res } = await this.$http.put(
+          `categories/${cate.cat_id}/attributes/${cate.attr_id}`,
           {
-            attr_name: row.attr_name,
-            attr_sel: row.attr_sel,
-            attr_vals: row.attr_vals.join(' ')
+            attr_name: cate.attr_name,
+            attr_sel: this.activeName,
+            attr_vals: vals
           }
         )
         if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
         this.$message.success(res.meta.msg)
+
+        cate.attr_vals = res.data.attr_vals
+        this.inputVisible = 0
+        this.inputValue = ''
+      }
+      else {
+        this.inputValue = ''
+        this.inputVisible = 0
+      }
+    },
+    async removeVals(del, all, num) {
+      let vals = all.attr_vals
+      vals = vals.replace(',', ' ')
+      if (num === 0) {
+        if (all.attr_vals == del) {
+          vals = vals.replace(del, '')
+        } else {
+          vals = vals.replace(del + ' ', '')
+        }
+      } else {
+        vals = vals.replace(' ' + del, '')
+      }
+      // vals = vals.replace(/ /g,',')
+
+      const { data: res } = await this.$http.put(
+        `categories/${all.cat_id}/attributes/${all.attr_id}`,
+        {
+          attr_name: all.attr_name,
+          attr_sel: this.activeName,
+          attr_vals: vals
+        }
+      )
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.$message.success(res.meta.msg)
+
+      all.attr_vals = res.data.attr_vals
+      // this.getParamsData()
     }
   }
 }
