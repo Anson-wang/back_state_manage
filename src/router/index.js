@@ -17,7 +17,9 @@ const Cate = () =>
 const Params = () =>
     import ('../components/goods/param.vue')
 const Goods = () =>
-    import ('../components/goods/good.vue')
+    import ('../components/goods/list.vue')
+const GoodsAdd = () =>
+    import ('../components/goods/add.vue')
 
 
 Vue.use(VueRouter)
@@ -59,10 +61,15 @@ const routes = [{
             },
             {
                 path: '/goods',
-                component: Goods
+                component: Goods,
+            },
+            {
+                path: '/goods/add',
+                component: GoodsAdd,
             }
         ]
-    }
+    },
+
 ]
 
 const router = new VueRouter({
