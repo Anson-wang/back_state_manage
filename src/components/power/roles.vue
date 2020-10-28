@@ -205,7 +205,6 @@ export default {
       if (res.meta.status !== 200)
         return this.$message.error('获取角色列表失败')
       this.rolelist = res.data
-      console.log(this.rolelist)
     },
     //根据id删除对应的权限
     async removeRightById(role, rightId) {

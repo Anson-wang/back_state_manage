@@ -31,8 +31,8 @@ export default {
   data() {
     return{
       loginForm: {
-        username: 'admin',
-        password: '123456'
+        username: '',
+        password: ''
       },
       //表单验证规则
       loginFormRules: {
@@ -50,7 +50,7 @@ export default {
   },
   methods: {
     resetLoginForm() {
-      //console.log(this)
+
       //$refs拿到实例对象，调用resetFields重置表单
       this.$refs.loginFormRef.resetFields()
     },

@@ -168,7 +168,6 @@ export default {
       })
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.orderlist = res.data.goods
-      console.log(this.orderlist)
       this.total = res.data.total
     },
    

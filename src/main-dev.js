@@ -9,16 +9,28 @@ import VueQuillEditor from 'vue-quill-editor'
 import 'quill/dist/quill.core.css' // import styles
 import 'quill/dist/quill.snow.css' // for snow theme
 import 'quill/dist/quill.bubble.css' // for bubble theme
+//导入 NProgress 包对应的JS和CSS
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+
 import axios from 'axios'
 //配置请求路径
 axios.defaults.baseURL = 'http://timemeetyou.com:8889/api/private/v1/'
 
 //给请求头(headers)添加Authorization字段,值为token
+//request拦截器中,显示进度条
 axios.interceptors.request.use(config => {
-    config.headers.Authorization = window.sessionStorage.getItem('token')
-        //返回config请求字段
+        NProgress.start()
+        config.headers.Authorization = window.sessionStorage.getItem('token')
+            //返回config请求字段
+        return config
+    })
+    //在response 拦截器中,隐藏进度条 NProgress.done()
+axios.interceptors.response.use(config => {
+    NProgress.done()
     return config
 })
+
 Vue.prototype.$http = axios;
 
 Vue.config.productionTip = false;
